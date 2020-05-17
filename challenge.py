@@ -7,7 +7,9 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import*
 import matplotlib
+matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
+import matplotlib.style
 matplotlib.style.use('ggplot')
 import seaborn as sn
 import numpy as np
@@ -24,8 +26,8 @@ import numpy as np
 objects={}
 
 #Opening the Json files and parsing them appropriately 
-with open("/Users/celinatala/Desktop/Dali/work/DALI_Data-Anon.json") as json_file:
-    data = json.load(json_file)
+with open("/Users/celinatala/Desktop/DataChallenge/DALI_Data-Anon.json") as json_file:
+    data =json.load(json_file)
     for variable in data:
         for key in variable.keys():
             if key not in objects.keys():
@@ -49,7 +51,7 @@ for i in range (0, len(phonetype)):
     else:
         phonetype[i] = 0
 
-#Changing the year list into int
+# #Changing the year list into int
 year = objects['year']
 for i in range (0, len(year)):
     year[i] = year[i][1:]
@@ -59,7 +61,7 @@ year=list(map(int, year))
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
 
-##We are starting to run our logistic regression now using the following variables
+#We are starting to run our logistic regression now using the following variables
 df = pd.DataFrame(objects, columns = ['gender', 'phoneType', 'year', 'happiness', 'stressed', 'heightInches', 'sleepPerNight', 'affiliated', 'numOfLanguages'])
 
 ##since heightInches has a missing value, we will fill it in with the average of the other heights
@@ -82,7 +84,7 @@ clf2 = RandomForestClassifier(n_estimators=100)
 clf2.fit(X_train, y2_train)
 y_pred2 = clf2.predict(X_test)
 
-#The GUI
+# #The GUI
 root = tk.Tk()
 label_width = 20
 
@@ -215,13 +217,6 @@ def predict():
 button1 = tk.Button(root, text = '  Predict     ', command = predict)
 canvas1.create_window(320, 320, window=button1)
 
-#A function that determines the importance of features 
-#The lower numbers mean it is not as important for our regression
-def importance():
-    featureImportances = pd.Series(clf.feature_importances_).sort_values(ascending=False)
-    sn.barplot(x=round(featureImportances, 4), y=featureImportances)
-    plt.xlabel('Features Importance')
-    plt.show()
 
 def randomCorrelations():
     
@@ -273,7 +268,6 @@ def Correlate(x, y, xAxis, yAxis):
         
 menubar = Menu(root)
 graphmenu = Menu(menubar, tearoff=0)
-graphmenu.add_command(label="Importance graph", command = importance)
 graphmenu.add_command(label = "Correlations ", command = randomCorrelations)
 menubar.add_cascade(label = "graphs", menu=graphmenu)
 root.config(menu=menubar)
